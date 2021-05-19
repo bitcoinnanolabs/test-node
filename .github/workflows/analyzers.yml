@@ -6,7 +6,8 @@ jobs:
   clang_format:
     runs-on: ubuntu-18.04
     steps:
-      - uses: actions/checkout@50fbc62
+      - uses: actions/checkout@e1a55de
+
       - name: Get clang-format 8
         env: 
           DEBIAN_FRONTEND: noninteractive

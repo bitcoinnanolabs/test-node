@@ -8,7 +8,8 @@ jobs:
   linux_job:
     runs-on: ubuntu-18.04
     steps:
-      - uses: actions/checkout@722adc6
+      - uses: actions/checkout@e1a55de
+
       - name: Checkout Submodules
         run: git submodule update --init --recursive
       - name: Fetch Deps

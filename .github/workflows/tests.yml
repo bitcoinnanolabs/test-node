@@ -12,7 +12,8 @@ jobs:
     env:
       BOOST_ROOT: /tmp/boost
     steps:
-      - uses: actions/checkout@722adc6
+      - uses: actions/checkout@e1a55de
+
       - name: Checkout Submodules
         run: git submodule update --init --recursive
       - name: Fetch Deps
@@ -24,7 +25,8 @@ jobs:
     runs-on: ubuntu-18.04
     timeout-minutes: 60
     steps:
-      - uses: actions/checkout@722adc6
+      - uses: actions/checkout@e1a55de
+
       - name: Checkout Submodules
         run: git submodule update --init --recursive
       - name: Fetch Deps
@@ -36,7 +38,8 @@ jobs:
     runs-on: ubuntu-18.04
     timeout-minutes: 60
     steps:
-      - uses: actions/checkout@722adc6
+      - uses: actions/checkout@e1a55de
+
       - name: Checkout Submodules
         run: git submodule update --init --recursive
       - name: Fetch Deps
@@ -48,7 +51,8 @@ jobs:
     runs-on: windows-latest
     timeout-minutes: 60
     steps:
-      - uses: actions/checkout@722adc6
+      - uses: actions/checkout@e1a55de
+
       - name: Windows Defender
         run: ci/actions/windows/disable_windows_defender.ps1
       - name: Checkout Submodules
