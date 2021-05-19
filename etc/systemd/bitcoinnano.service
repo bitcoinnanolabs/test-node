@@ -1,0 +1,13 @@
+[Unit]
+Description=Btco Daemon live network
+After=network.target
+
+[Service]
+Type=simple
+User=bitcoinnano
+WorkingDirectory=/var/bitcoinnano/Btco
+ExecStart=/usr/bin/btco_node --daemon
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,64 @@
+Name:                   bitcoinnano
+Version:                @VERSION@ 
+Release:                @RELEASE@%{?dist}
+Summary:                Bitcoinnano Daemon
+License:                BSD-2-Clause
+URL:                    https://bitcoinnano.org/
+Requires(pre):          /usr/sbin/useradd, /usr/bin/getent
+Requires(postun):       /usr/sbin/userdel
+BuildRequires:          make, libstdc++-static, glibc-devel, glibc-headers
+Source:                 btco-%{version}.tar.gz
+
+%description
+This is bitcoinnano daemon.  Btco is a digital currency that is
+peer-to-peer, decentralized, and trustless. This package includes
+the btco daemon, and a service.
+
+%prep
+if [ ! -x "$(which cmake)" ]; then
+	echo "cmake must exist, try:" >&2
+	echo "      scl enable llvm-toolset-7 devtoolset-7 'rpmbuild ...'" >&2
+	exit 1
+fi
+if cc --std=c++14 --version 2>&1 >/dev/null | grep '^' >/dev/null; then
+	echo "Unsupported C++ compiler, try:" >&2
+	echo "      scl enable llvm-toolset-7 devtoolset-7 'rpmbuild ...'" >&2
+	exit 1
+fi
+if test ! -d /usr/local/boost; then
+	echo "Boost should be in /usr/local/boost" >&2
+	exit 1
+fi
+%autosetup -n btco-%{version}
+
+%build
+cmake -DCMAKE_VERBOSE_MAKEFILE=ON -DBOOST_ROOT=/usr/local/boost .
+make btco_node %{?_smp_mflags}
+
+%install
+if [ ! %{buildroot} = "/" ]; then %{__rm} -rf %{buildroot}; fi
+mkdir -p %{buildroot}/usr/bin
+mkdir -p %{buildroot}/etc/systemd/system/
+cp btcoo_node %{buildroot}/usr/bin/btco_node
+cp btco_rpc %{buildroot}/usr/bin/btco_rpc
+cp etc/systemd/bitcoinnano.service %{buildroot}/etc/systemd/system/bitcoinnano.service
+
+%clean
+if [ ! %{buildroot} = "/" ]; then %{__rm} -rf %{buildroot}; fi
+
+%files
+%defattr(755,root,root)
+%{_bindir}/btco_node
+%attr(644,root,root) /etc/systemd/system/bitcoinnano.service
+
+%pre
+PATH="/usr/bin:/usr/sbin:/bin:/sbin:${PATH}"; export PATH
+mkdir -p /var/bitcoinnano/Btco
+getent group bitcoinnano >/dev/null || groupadd --system bitcoinnano || exit 1
+getent passwd bitcoinnano >/dev/null || useradd --system --create-home --home-dir /var/bitcoinnano --shell /bin/bash --comment "Bitcoinnano Daemon user" --gid bitcoinnano bitcoinnano || exit 1
+chown -R bitcoinnano:bitcoinnano /var/bitcoinnano
+chmod 700 /var/bitcoinnano
+
+%postun
+PATH="/usr/bin:/usr/sbin:/bin:/sbin:${PATH}"; export PATH
+userdel bitcoinnano >/dev/null 2>/dev/null || :

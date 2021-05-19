@@ -1,0 +1,13 @@
+[Unit]
+Description=Btco Daemon beta network
+After=network.target
+
+[Service]
+Type=simple
+User=bitcoinnano
+WorkingDirectory=/var/bitcoinnano/BtcoBeta
+ExecStart=/usr/bin/btco_node-beta --daemon
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
